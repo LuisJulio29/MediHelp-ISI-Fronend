@@ -27,7 +27,7 @@ function Register() {
         className="p-4 bg-light shadow rounded"
         style={{ width: "100%", maxWidth: "500px" }}
       >
-        <h2 className="text-center mb-4">Register</h2>
+        <h2 className="text-center mb-4">Registro</h2>
         <Form
           name="register"
           initialValues={{ remember: true }}
@@ -59,7 +59,7 @@ function Register() {
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit" size="large" block>
-              Register
+              Registrar
             </Button>
           </Form.Item>
         </Form>
