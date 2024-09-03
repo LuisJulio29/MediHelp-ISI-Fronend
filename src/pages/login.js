@@ -2,9 +2,12 @@ import React from "react";
 import { Form, Input, Button, Checkbox } from "antd";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 function Login() {
+  const {loading} = useSelector((state) => state.alerts);
+  console.log(loading);
   const navigate = useNavigate();
   const onFinish = async (values) => {
     try {
