@@ -2,16 +2,18 @@ import React from "react";
 import { Form, Input, Button, Checkbox } from "antd";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { hideloading, showloading } from "../redux/alertsSlice";
 
 function Login() {
-  const {loading} = useSelector((state) => state.alerts);
-  console.log(loading);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const onFinish = async (values) => {
     try {
+      dispatch(showloading());
       const response = await axios.post("api/user/login", values);
+      dispatch(hideloading());
       if (response.data.success) {
         toast.success(response.data.message);
         toast.success("Redirigiendo al home");

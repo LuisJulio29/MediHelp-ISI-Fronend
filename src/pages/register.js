@@ -3,12 +3,17 @@ import { Form, Input, Button } from "antd";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { hideloading, showloading } from "../redux/alertsSlice";
 
 function Register() {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const onFinish = async (values) => {
     try {
+      dispatch(showloading());
       const response = await axios.post("api/user/register", values);
+      dispatch(hideloading());
       if (response.data.success) {
         toast.success(response.data.message);
         toast.success("Redirigiendo al Login");
@@ -17,6 +22,7 @@ function Register() {
         toast.error(response.data.message);
       }
     } catch (error) {
+      dispatch(hideloading());
       toast.error("Algo mal ha pasado :(");
     }
   };
