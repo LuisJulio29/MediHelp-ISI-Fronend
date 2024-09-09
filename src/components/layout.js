@@ -5,9 +5,10 @@ import {
   UserOutlined,
   BellOutlined,
   HomeOutlined,
-  LogoutOutlined,
-  FileAddOutlined,
   CalendarOutlined,
+  LogoutOutlined,
+  MedicineBoxOutlined,
+  UsergroupAddOutlined
 } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 
@@ -15,9 +16,9 @@ const { Header, Sider, Content } = Layout;
 
 function CustomLayout({ children }) {
   const navigate = useNavigate();
-  const {user}=useSelector(state=>state.user)
+  const { user } = useSelector((state) => state.user);
 
-  const menuItems = [
+  const userMenu = [
     {
       key: "1",
       icon: <HomeOutlined />,
@@ -30,26 +31,55 @@ function CustomLayout({ children }) {
       label: "Appointments",
       path: "/appointments",
     },
+  ];
+
+  const adminMenu = [
     {
-      key: "3",
-      icon: <FileAddOutlined />,
-      label: "Apply Doctor",
-      path: "/apply-Doctor",
+      key: "1",
+      icon: <HomeOutlined />,
+      label: "Home",
+      path: "/",
     },
     {
-      key: "4",
+      key: "2",
+      icon: <UsergroupAddOutlined />,
+      label: "Users",
+      path: "/users",
+    },
+    {
+      key: "3",
+      icon: <MedicineBoxOutlined />,
+      label: "Doctors",
+      path: "/doctors",
+    },
+  ];
+
+  // Añadir el logout como un ítem adicional al final del menú
+  const commonMenu = [
+    ...user?.isAdmin ? adminMenu : userMenu,
+    {
+      key: "logout",
       icon: <LogoutOutlined />,
       label: "Logout",
-      path: "/logout",
     },
   ];
 
   // Manejar clic en el elemento del menú
   const handleMenuClick = ({ key }) => {
-    const selectedItem = menuItems.find(item => item.key === key);
-    if (selectedItem && selectedItem.path) {
-      navigate(selectedItem.path); // Navegar a la ruta específica
+    if (key === "logout") {
+      localStorage.clear(); // Eliminar token del localStorage
+      navigate("/login"); // Redirigir al login
+    } else {
+      const selectedItem = commonMenu.find((item) => item.key === key);
+      if (selectedItem && selectedItem.path) {
+        navigate(selectedItem.path); // Navegar a la ruta específica
+      }
     }
+  };
+
+  // Manejar clic en el Avatar o nombre de usuario
+  const handleProfileClick = () => {
+    navigate("/profile"); // Navegar a la ruta del perfil
   };
 
   return (
@@ -63,7 +93,7 @@ function CustomLayout({ children }) {
           theme="dark"
           mode="inline"
           defaultSelectedKeys={["1"]}
-          items={menuItems}
+          items={commonMenu}
           onClick={handleMenuClick} // Asignar el manejador de clics
         />
       </Sider>
@@ -76,8 +106,15 @@ function CustomLayout({ children }) {
             <Badge>
               <BellOutlined style={{ fontSize: "20px", marginRight: "30px" }} />
             </Badge>
-            <Avatar size="large" icon={<UserOutlined />} />
-            <span className="ms-2 me-4">{user?.name} </span>
+
+            {/* Avatar y nombre de usuario clicables */}
+            <div
+              onClick={handleProfileClick} // Asignar manejador de clics
+              style={{ cursor: "pointer", display: "flex", alignItems: "center" }}
+            >
+              <Avatar size="medium" icon={<UserOutlined />} />
+              <span className="ms-2 me-3">{user?.name}</span>
+            </div>
           </div>
         </Header>
 

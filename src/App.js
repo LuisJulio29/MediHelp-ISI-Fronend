@@ -8,6 +8,8 @@ import { useSelector } from "react-redux";
 import ProtectedRoute from "./components/protectedRoute";
 import PublicRoute from "./components/publicRoute";
 
+
+
 function App() {
   const { loading } = useSelector((state) => state.alerts);
   return (
@@ -15,7 +17,7 @@ function App() {
       {loading && (
         <div
           className="d-flex justify-content-center align-items-center position-fixed w-100 h-100"
-          style={{ zIndex: 2 }}
+          style={{ zIndex: 2 , backgroundColor: "rgba(0, 0, 0, 0.5)"}}
         >
           <div className="spinner-border text-info" role="status">
             <span className="visually-hidden">Loading...</span>
