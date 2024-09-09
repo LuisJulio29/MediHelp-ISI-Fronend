@@ -7,6 +7,7 @@ import { Toaster } from "react-hot-toast";
 import { useSelector } from "react-redux";
 import ProtectedRoute from "./components/protectedRoute";
 import PublicRoute from "./components/publicRoute";
+import ApplyDoctor from "./pages/applyDoctor";
 
 
 
@@ -33,6 +34,14 @@ function App() {
           element={
             <ProtectedRoute>
               <Home />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/apply-doctor"
+          element={
+            <ProtectedRoute>
+              <ApplyDoctor />
             </ProtectedRoute>
           }
         />

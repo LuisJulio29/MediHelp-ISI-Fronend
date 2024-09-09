@@ -1,6 +1,6 @@
 import React from "react";
 import { Layout, Menu, Avatar, Badge } from "antd";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   UserOutlined,
   BellOutlined,
@@ -8,7 +8,8 @@ import {
   CalendarOutlined,
   LogoutOutlined,
   MedicineBoxOutlined,
-  UsergroupAddOutlined
+  UsergroupAddOutlined,
+  UserAddOutlined,
 } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 
@@ -16,45 +17,51 @@ const { Header, Sider, Content } = Layout;
 
 function CustomLayout({ children }) {
   const navigate = useNavigate();
+  const location = useLocation(); // Para obtener la ruta actual
   const { user } = useSelector((state) => state.user);
 
   const userMenu = [
     {
-      key: "1",
+      key: "/",
       icon: <HomeOutlined />,
       label: "Home",
       path: "/",
     },
     {
-      key: "2",
+      key: "/appointments",
       icon: <CalendarOutlined />,
       label: "Appointments",
       path: "/appointments",
+    },
+    {
+      key: "/apply-doctor",
+      icon: <UserAddOutlined />,
+      label: "Apply Doctor",
+      path: "/apply-doctor",
     },
   ];
 
   const adminMenu = [
     {
-      key: "1",
+      key: "/",
       icon: <HomeOutlined />,
       label: "Home",
       path: "/",
     },
     {
-      key: "2",
+      key: "/users",
       icon: <UsergroupAddOutlined />,
       label: "Users",
       path: "/users",
     },
     {
-      key: "3",
+      key: "/doctors",
       icon: <MedicineBoxOutlined />,
       label: "Doctors",
       path: "/doctors",
     },
   ];
 
-  // Añadir el logout como un ítem adicional al final del menú
   const commonMenu = [
     ...user?.isAdmin ? adminMenu : userMenu,
     {
@@ -64,11 +71,11 @@ function CustomLayout({ children }) {
     },
   ];
 
-  // Manejar clic en el elemento del menú
   const handleMenuClick = ({ key }) => {
     if (key === "logout") {
       localStorage.clear(); // Eliminar token del localStorage
       navigate("/login"); // Redirigir al login
+      window.location.reload();
     } else {
       const selectedItem = commonMenu.find((item) => item.key === key);
       if (selectedItem && selectedItem.path) {
@@ -77,7 +84,6 @@ function CustomLayout({ children }) {
     }
   };
 
-  // Manejar clic en el Avatar o nombre de usuario
   const handleProfileClick = () => {
     navigate("/profile"); // Navegar a la ruta del perfil
   };
@@ -92,9 +98,9 @@ function CustomLayout({ children }) {
         <Menu
           theme="dark"
           mode="inline"
-          defaultSelectedKeys={["1"]}
+          selectedKeys={[location.pathname]} // Marcar el ítem según la ruta actual
           items={commonMenu}
-          onClick={handleMenuClick} // Asignar el manejador de clics
+          onClick={handleMenuClick}
         />
       </Sider>
 
@@ -109,7 +115,7 @@ function CustomLayout({ children }) {
 
             {/* Avatar y nombre de usuario clicables */}
             <div
-              onClick={handleProfileClick} // Asignar manejador de clics
+              onClick={handleProfileClick}
               style={{ cursor: "pointer", display: "flex", alignItems: "center" }}
             >
               <Avatar size="medium" icon={<UserOutlined />} />
