@@ -1,12 +1,42 @@
-import React from 'react';
-import { Form, Input, Button, Row, Col, TimePicker } from 'antd';
-import CustomLayout from '../components/layout';
-
+import React from "react";
+import { Form, Input, Button, Row, Col, TimePicker } from "antd";
+import CustomLayout from "../components/layout";
+import { useDispatch, useSelector } from "react-redux";
+import { showloading, hideloading } from "../redux/alertsSlice";
+import axios from "axios";
+import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 function ApplyDoctor() {
-    const onFinish = (values) => {
-      console.log('Form Submitted:', values);
-    };
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.user);
+  const navigate = useNavigate();
+  const onFinish = async (values) => {
+    try {
+      dispatch(showloading());
+      const response = await axios.post("api/user/apply-doctor-account", {
+        ...values,
+        userid: user._id,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+      );
+      dispatch(hideloading());
+      if (response.data.success) {
+        toast.success(response.data.message);
+        navigate("/");
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      dispatch(hideloading());
+      toast.error("Algo mal ha pasado :(");
+    }
+  };
+
   return (
     <CustomLayout>
       <Form
@@ -24,7 +54,7 @@ function ApplyDoctor() {
           <Row gutter={16}>
             <Col xs={24} md={8}>
               <Form.Item
-                name="nombre"
+                name="firstName"
                 label="Nombre"
                 rules={[
                   { required: true, message: "Por favor ingresa tu nombre" },
@@ -35,7 +65,7 @@ function ApplyDoctor() {
             </Col>
             <Col xs={24} md={8}>
               <Form.Item
-                name="apellido"
+                name="lastName"
                 label="Apellido"
                 rules={[
                   { required: true, message: "Por favor ingresa tu apellido" },
@@ -46,7 +76,7 @@ function ApplyDoctor() {
             </Col>
             <Col xs={24} md={8}>
               <Form.Item
-                name="telefono"
+                name="phoneNumber"
                 label="Número Telefónico"
                 rules={[
                   {
@@ -67,7 +97,7 @@ function ApplyDoctor() {
           <Row gutter={16}>
             <Col xs={24} md={12}>
               <Form.Item
-                name="departamento"
+                name="department"
                 label="Departamento"
                 rules={[
                   {
@@ -81,13 +111,13 @@ function ApplyDoctor() {
             </Col>
             <Col xs={24} md={12}>
               <Form.Item
-                name="direccion"
-                label="Dirección"
+                name="email"
+                label="Dirección de Correo Electrónico"
                 rules={[
                   { required: true, message: "Por favor ingresa tu dirección" },
                 ]}
               >
-                <Input placeholder="Dirección" />
+                <Input placeholder="Correo Electronico" />
               </Form.Item>
             </Col>
             <Col xs={24} md={12}>
@@ -101,7 +131,7 @@ function ApplyDoctor() {
                   },
                 ]}
               >
-                <TimePicker.RangePicker />;
+                <TimePicker.RangePicker />
               </Form.Item>
             </Col>
           </Row>
