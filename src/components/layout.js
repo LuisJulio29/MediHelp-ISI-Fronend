@@ -84,9 +84,6 @@ function CustomLayout({ children }) {
     }
   };
 
-  const handleProfileClick = () => {
-    navigate("/profile"); // Navegar a la ruta del perfil
-  };
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
@@ -109,14 +106,14 @@ function CustomLayout({ children }) {
         {/* Header */}
         <Header className="bg-white p-0">
           <div className="d-flex justify-content-end align-items-center p-2">
-            <Badge>
-              <BellOutlined style={{ fontSize: "20px", marginRight: "30px" }} />
-            </Badge>
-
-            {/* Avatar y nombre de usuario clicables */}
+            <div onClick={()=>navigate("/notifications")} style={{cursor:"pointer"}}>
+              <Badge count={user?.unseenNotifications.length} >
+                <BellOutlined style={{ fontSize: "22px"}} />
+              </Badge>
+            </div>
             <div
-              onClick={handleProfileClick}
-              style={{ cursor: "pointer", display: "flex", alignItems: "center" }}
+              onClick={() => navigate("/profile")}
+              style={{ cursor: "pointer", display: "flex", alignItems: "center" ,marginLeft: "30px"}}
             >
               <Avatar size="medium" icon={<UserOutlined />} />
               <span className="ms-2 me-3">{user?.name}</span>
