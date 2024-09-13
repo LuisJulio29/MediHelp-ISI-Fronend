@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux'
 import { showloading, hideloading } from "../../redux/alertsSlice"
 import axios from 'axios'
 import { Button, Table, Space } from 'antd'
+import {toast} from 'react-hot-toast'
 
 
 function DoctorList() {
@@ -25,6 +26,27 @@ function DoctorList() {
       }
     } catch (error) {
       dispatch(hideloading())
+      console.log(error)
+    }
+  }
+
+  const changeDoctorStatus = async (record,status) => {
+    try {
+      dispatch(showloading())
+      const response = await axios.post('/api/admin/change-doctor-status',
+        {doctorId:record._id , userId:record.userId, status:status}, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      })
+      dispatch(hideloading())
+      if (response.data.success) {
+        toast.success(response.data.message)
+        getDoctorsData()
+      }
+    } catch (error) {
+      dispatch(hideloading())
+      toast.error("Error al cambiar el estado del doctor")
       console.log(error)
     }
   }
@@ -65,10 +87,10 @@ function DoctorList() {
       render: (text, record) => (
         <Space size="middle">
           {record.status === "pending" && (
-            <Button type='primary'>Aprobar</Button>
+            <Button type='primary' onClick={()=>changeDoctorStatus(record, "approved")}>Aprobar</Button>
           )}
           {record.status === "approved" && (
-            <Button type='danger'>Desaprobar</Button>
+            <Button danger  type='primary'  onClick={()=>changeDoctorStatus(record, "blocked")}>Desaprobar</Button>
           )}
         </Space>
       ),
