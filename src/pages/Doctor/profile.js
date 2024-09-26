@@ -6,6 +6,7 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import DoctorForm from "../../components/DoctorForm";
+import moment from "moment";
 
 
 function Profile() {
@@ -22,6 +23,10 @@ function Profile() {
             {
               ...values,
               userid: user._id,
+              timings:[
+                moment(values.timings[0]).format("HH:mm"),
+                moment(values.timings[1]).format("HH:mm"),
+              ]
             },
             {
               headers: {
@@ -32,7 +37,7 @@ function Profile() {
           dispatch(hideloading());
           if (response.data.success) {
             toast.success(response.data.message);
-            navigate("/");
+            navigate("/#");
           } else {
             toast.error(response.data.message);
           }
@@ -59,7 +64,6 @@ function Profile() {
           dispatch(hideloading());
           if (response.data.success) {
             setDoctor(response.data.data);
-            console.log(response.data.data);
           }
         } catch (error) {
             console.log(error);

@@ -6,6 +6,7 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import DoctorForm from "../components/DoctorForm";
+import moment from "moment";
 
 function ApplyDoctor() {
   const dispatch = useDispatch();
@@ -14,11 +15,16 @@ function ApplyDoctor() {
   const onFinish = async (values) => {
     try {
       dispatch(showloading());
+      console.log("timmings iniciales",values.timings);
       const response = await axios.post(
         "/api/user/apply-doctor-account",
         {
           ...values,
-          userid: user._id,
+          userId: user._id,
+          timings: [
+            moment(values.timings[0]).format("HH:mm"),
+            moment(values.timings[1]).format("HH:mm"),
+          ],
         },
         {
           headers: {
@@ -35,6 +41,7 @@ function ApplyDoctor() {
       }
     } catch (error) {
       dispatch(hideloading());
+      console.log(error);
       toast.error("Algo mal ha pasado :(");
     }
   };
