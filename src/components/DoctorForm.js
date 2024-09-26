@@ -1,11 +1,12 @@
 import { Button, Col, Form, Input, Row, TimePicker } from "antd";
 import React from "react";
 
-function DoctorForm(onFinish) {
+function DoctorForm({onFinish,initialValues}) {
   return (
     <Form
       layout="vertical"
       onFinish={onFinish}
+      initialValues={initialValues}
       style={{
         backgroundColor: "#fff",
         padding: "20px",
@@ -84,20 +85,7 @@ function DoctorForm(onFinish) {
               <Input placeholder="Correo Electronico" />
             </Form.Item>
           </Col>
-          <Col xs={24} md={12}>
-            <Form.Item
-              name="timings"
-              label="Horario Laboral"
-              rules={[
-                {
-                  required: true,
-                  message: "Por favor ingresa su horario laboral",
-                },
-              ]}
-            >
-              <TimePicker.RangePicker />
-            </Form.Item>
-          </Col>
+          
         </Row>
       </div>
 
