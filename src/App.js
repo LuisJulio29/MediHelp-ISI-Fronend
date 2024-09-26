@@ -11,6 +11,7 @@ import ApplyDoctor from "./pages/applyDoctor";
 import Notifications from "./pages/notifications";
 import UserList from "./pages/Admin/userList";
 import DoctorList from "./pages/Admin/doctorlist";
+import Profile from "./pages/Doctor/profile";
 
 
 
@@ -69,6 +70,14 @@ function App() {
           element={
             <ProtectedRoute>
               <DoctorList />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/doctor/profile/:doctorId"
+          element={
+            <ProtectedRoute>
+              <Profile />
             </ProtectedRoute>
           }
         />

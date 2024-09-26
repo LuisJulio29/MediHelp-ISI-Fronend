@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import CustomLayout from '../../components/layout'
+import CustomLayout from '../../components/Layout'
 import { useDispatch } from 'react-redux'
 import { showloading, hideloading } from "../../redux/alertsSlice"
 import axios from 'axios'

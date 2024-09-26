@@ -1,6 +1,6 @@
 import React from "react";
 import { Form, Input, Button, Row, Col, TimePicker } from "antd";
-import CustomLayout from "../components/layout";
+import CustomLayout from "../components/Layout";
 import { useDispatch, useSelector } from "react-redux";
 import { showloading, hideloading } from "../redux/alertsSlice";
 import axios from "axios";

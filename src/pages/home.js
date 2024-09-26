@@ -1,7 +1,7 @@
 import React from "react";
 import { useEffect } from "react";
 import axios from "axios";
-import CustomLayout from "../components/layout";
+import CustomLayout from "../components/Layout";
 
 function Home() {
   const getData = async () => {

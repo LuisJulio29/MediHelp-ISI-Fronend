@@ -1,5 +1,5 @@
 import React from 'react' 
-import CustomLayout from '../components/layout'
+import CustomLayout from '../components/Layout'
 import { Tabs, Button, Card } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'

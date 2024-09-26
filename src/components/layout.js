@@ -40,6 +40,20 @@ function CustomLayout({ children }) {
       path: "/apply-doctor",
     },
   ];
+  const doctorMenu = [
+    {
+      key: "/",
+      icon: <HomeOutlined />,
+      label: "Home",
+      path: "/",
+    },
+    {
+      key: "/appointments",
+      icon: <CalendarOutlined />,
+      label: "Appointments",
+      path: "/appointments",
+    }, 
+  ];
 
   const adminMenu = [
     {
@@ -63,7 +77,7 @@ function CustomLayout({ children }) {
   ];
 
   const commonMenu = [
-    ...user?.isAdmin ? adminMenu : userMenu,
+    ...user?.isAdmin ? adminMenu : user?.isDoctor ? doctorMenu : userMenu, 
     {
       key: "logout",
       icon: <LogoutOutlined />,
@@ -112,7 +126,7 @@ function CustomLayout({ children }) {
               </Badge>
             </div>
             <div
-              onClick={() => navigate("/profile")}
+              onClick={() => navigate(`/doctor/profile/${user?._id}`)}
               style={{ cursor: "pointer", display: "flex", alignItems: "center" ,marginLeft: "30px"}}
             >
               <Avatar size="medium" icon={<UserOutlined />} />
