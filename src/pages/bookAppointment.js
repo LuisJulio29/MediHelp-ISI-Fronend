@@ -4,8 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { showloading, hideloading } from "../redux/alertsSlice";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import { useNavigate, useParams } from "react-router-dom";
-import moment from "moment";
+import { useParams } from "react-router-dom";
 import { Button, Col, DatePicker, Row, TimePicker } from "antd";
 
 function BookAppointment() {
