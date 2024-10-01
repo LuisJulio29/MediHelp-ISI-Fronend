@@ -41,7 +41,38 @@ function BookAppointment() {
     }
   };
 
+  const checkAvailabity= async () => {
+    try {
+      dispatch(showloading());
+      const response = await axios.post(
+        "/api/user/check-booking-availability",
+        {
+          doctorId: params.doctorId,
+          date: date,
+          time: time,
+        },
+        {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        }
+      );
+      dispatch(hideloading());
+      if (response.data.success) {
+        toast.success(response.data.message);
+        setIsAvailable(true);
+      }else{
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Error al reservar la cita");
+      dispatch(hideloading());
+    }
+  };
+
   const bookNow = async () => {
+    setIsAvailable(false);
     try {
       dispatch(showloading());
       const response = await axios.post(
@@ -90,20 +121,22 @@ function BookAppointment() {
               <div className="d-flex flex-column">
                 <DatePicker
                   format="DD-MM-YY"
-                  onChange={(value) =>
-                    setDate(moment(value).format("DD_MM_YYYY"))
-                  }
+                  onChange={(value) =>{
+                    setIsAvailable(false);
+                    setDate(value)
+                  }}
                 />
                 <TimePicker
                   format="HH:mm"
                   onChange={(value) => {
-                    setTime(moment(value).format("HH:mm"));
+                    setIsAvailable(false);
+                    setTime(value);
                   }}
                 />
-                <Button type="primary">Chequear Disponibilidad</Button>
-                <Button type="primary" onClick={bookNow}>
-                  Agendar Ahora{" "}
-                </Button>
+                <Button type="primary" onClick={checkAvailabity}>Chequear Disponibilidad</Button>
+               {isAvailable && (
+                <Button type="primary" onClick={bookNow}>Agendar Ahora</Button>
+               )}
               </div>
             </Col>
           </Row>
