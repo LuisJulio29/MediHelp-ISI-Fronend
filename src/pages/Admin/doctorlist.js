@@ -110,7 +110,7 @@ function DoctorList() {
             columns={columns}
             rowKey="_id"
             bordered
-            pagination={{ pageSize: 5 }}
+            pagination={{ pageSize: 10 }}
             scroll={{ x: 'max-content' }} // Hacer que la tabla sea desplazable horizontalmente en pantallas pequeñas
             className="shadow-sm"
           />
