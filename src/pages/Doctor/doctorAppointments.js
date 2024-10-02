@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import CustomLayout from '../components/Layout'
+import CustomLayout from '../../components/Layout'
 import { useDispatch } from 'react-redux'
-import { showloading, hideloading } from "../redux/alertsSlice"
+import { showloading, hideloading } from "../../redux/alertsSlice"
 import axios from 'axios'
-import { Table, } from 'antd'
+import { Button, Space, Table, } from 'antd'
 import moment from 'moment'
+import { toast } from 'react-hot-toast'
 
 
-function Appointments() {
+function DoctorAppointmets() {
   const [appointments, setAppointments] = useState([])
   const dispatch = useDispatch()
 
@@ -15,7 +16,7 @@ function Appointments() {
   const getAppointmentsData = async () => {
     try {
       dispatch(showloading())
-      const response = await axios.get('/api/user/get-appointments-by-user-id', {
+      const response = await axios.get('/api/doctor/get-appointments-by-doctor-id', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
@@ -30,6 +31,28 @@ function Appointments() {
     }
   }
 
+  const changeAppointmentStatus = async (record,status) => {
+    try {
+      dispatch(showloading())
+      const response = await axios.post('/api/doctor/change-appointment-status',
+        {appointmentId : record._id , status : status}, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      })
+      dispatch(hideloading())
+      if (response.data.success) {
+        toast.success(response.data.message)
+        getAppointmentsData()
+      }
+    } catch (error) {
+      dispatch(hideloading())
+      toast.error("Error al cambiar el estado del doctor")
+      console.log(error)
+    }
+  }
+
+
 
   useEffect(() => {
     getAppointmentsData()
@@ -39,21 +62,21 @@ function Appointments() {
   const columns = [
     
     {
-      title: "Doctor",
+      title: "Paciente",
       dataIndex: "name",
       render: (text, record) => (
         <div className='card-text'>
-          {record.doctorInfo.firstName} {record.doctorInfo.lastName}
+          {record.userInfo.name} 
         </div>
       ),
       width: 150,
     },
     {
-      title: "Departamento",
-      dataIndex: "department",
+      title: "Email",
+      dataIndex: "email",
       render: (text, record) => (
         <div className='card-text'>
-          {record.doctorInfo.department}
+          {record.userInfo.email}
         </div>
       ),
       width: 150,
@@ -72,13 +95,28 @@ function Appointments() {
       title: "Estado",
       dataIndex: "status",
       width: 120,
-    }  
+    },
+    {
+        title: "Acciones",
+        dataIndex: "actions",
+        render: (text, record) => (
+          <Space size="middle">
+            {record.status === "pending" && (
+              <Button type='primary' onClick={()=>changeAppointmentStatus(record, "approved")}>Aprobar</Button>
+            )}
+            {record.status === "pending" && (
+              <Button danger  type='primary'  onClick={()=>changeAppointmentStatus(record, "rejected")}>Desaprobar</Button>
+            )}
+          </Space>
+        ),
+        width: 150,
+      }
   ]
 
   return (
     <CustomLayout>
     <div className="container mt-4">
-        <h1 className="text-center mb-4">Citas establecidas</h1>
+        <h1 className="text-center mb-4">Reservas</h1>
 
         {/* Tabla responsive */}
         <div className="table-responsive">
@@ -121,4 +159,4 @@ function Appointments() {
   )
 }
 
-export default Appointments
+export default DoctorAppointmets

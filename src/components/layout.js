@@ -51,7 +51,7 @@ function CustomLayout({ children }) {
       key: "/appointments",
       icon: <CalendarOutlined />,
       label: "Appointments",
-      path: "/appointments",
+      path: "/doctor/appointments",
     }, 
   ];
 
