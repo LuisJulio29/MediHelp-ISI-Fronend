@@ -23,6 +23,7 @@ function Appointments() {
       dispatch(hideloading())
       if (response.data.success) {
         setAppointments(response.data.data)
+        console.log(response.data.data)
       }
     } catch (error) {
       dispatch(hideloading())
@@ -63,7 +64,7 @@ function Appointments() {
       dataIndex: "fecha",
       render: (text, record) => (
         <div className='card-text'>
-          {moment(record.date).format('DD-MM-YYYY')} {moment(record.time, 'HH:mm').format('hh:mm A')}
+          {record.date} {moment(record.time, 'HH:mm').format('hh:mm A')}
         </div>
       ),
       width: 200,
@@ -87,7 +88,7 @@ function Appointments() {
             columns={columns}
             rowKey="_id"
             bordered
-            pagination={{ pageSize: 5 }}
+            pagination={{ pageSize: 10 }}
             scroll={{ x: 'max-content' }} // Hacer que la tabla sea desplazable horizontalmente en pantallas pequeñas
             className="shadow-sm"
           />
