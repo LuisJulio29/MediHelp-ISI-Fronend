@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import CustomLayout from "../components/Layout";
-import { Col, Row, Calendar, Badge } from "antd";
+import { Col, Row, Calendar, Badge, Tabs } from "antd";
 import Doctor from "../components/Doctor";
 import { useDispatch } from "react-redux";
 import { hideloading, showloading } from "../redux/alertsSlice";
@@ -80,8 +80,9 @@ function Home() {
     const listData = getListData(value);
     return (
       <ul className="events">
-        {listData.map((item) => (
+        {listData.map((item, index) => (
           <Badge
+            key={index}
             status={item.type}
             text={<span style={{ whiteSpace: "normal" }}>{item.content}</span>}
           />
@@ -95,6 +96,11 @@ function Home() {
     return info.originNode;
   };
 
+  // Función para filtrar doctores por sede
+  const filterDoctorsByDepartment = (department) => {
+    return doctors.filter((doctor) => doctor.department === department);
+  };
+
   return (
     <CustomLayout>
       <div className="container mt-4">
@@ -103,14 +109,47 @@ function Home() {
         </div>
       </div>
 
-      <Row gutter={[20, 20]}>
-        {doctors.map((doctor) => (
-          <Col key={doctor._id} span={8} xs={24} sm={12} md={8} lg={6}>
-            <Doctor doctor={doctor} />
-          </Col>
-        ))}
-      </Row>
+      {/* Pestañas para las sedes */}
+      <Tabs type="card" centered className="mt-4">
+        <Tabs.TabPane tab="La Merced" key="1">
+          <Row gutter={[20, 20]}>
+            {filterDoctorsByDepartment("La Merced").map((doctor) => (
+              <Col key={doctor._id} span={8} xs={24} sm={12} md={8} lg={6}>
+                <Doctor doctor={doctor} />
+              </Col>
+            ))}
+          </Row>
+        </Tabs.TabPane>
+        <Tabs.TabPane tab="Piedra de Bolívar" key="2">
+          <Row gutter={[20, 20]}>
+            {filterDoctorsByDepartment("Piedra De Bolivar").map((doctor) => (
+              <Col key={doctor._id} span={8} xs={24} sm={12} md={8} lg={6}>
+                <Doctor doctor={doctor} />
+              </Col>
+            ))}
+          </Row>
+        </Tabs.TabPane>
+        <Tabs.TabPane tab="San Agustín" key="3">
+          <Row gutter={[20, 20]}>
+            {filterDoctorsByDepartment("San Agustin").map((doctor) => (
+              <Col key={doctor._id} span={8} xs={24} sm={12} md={8} lg={6}>
+                <Doctor doctor={doctor} />
+              </Col>
+            ))}
+          </Row>
+        </Tabs.TabPane>
+        <Tabs.TabPane tab="San Pablo" key="4">
+          <Row gutter={[20, 20]}>
+            {filterDoctorsByDepartment("San Pablo").map((doctor) => (
+              <Col key={doctor._id} span={8} xs={24} sm={12} md={8} lg={6}>
+                <Doctor doctor={doctor} />
+              </Col>
+            ))}
+          </Row>
+        </Tabs.TabPane>
+      </Tabs>
     </CustomLayout>
   );
 }
+
 export default Home;

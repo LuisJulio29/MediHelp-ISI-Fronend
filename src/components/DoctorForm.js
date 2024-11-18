@@ -63,10 +63,10 @@ function DoctorForm({ onFinish, initialValues }) {
           <Col xs={24} md={12}>
             <Form.Item
               name="department"
-              label="Departamento"
-              rules={[{ required: true, message: "Por favor ingresa tu departamento" }]}
+              label="Sede / Departamento"
+              rules={[{ required: true, message: "Por favor ingrese su departamento" }]}
             >
-              <Input placeholder="Departamento" />
+              <Input placeholder="Claustro ..." />
             </Form.Item>
           </Col>
           <Col xs={24} md={12}>
