@@ -46,6 +46,12 @@ function Register() {
             <Input size="large" placeholder="Nombre" />
           </Form.Item>
           <Form.Item
+            name="code"
+            rules={[{ required: true, message: "Introduzca su Codigo" }]}
+          >
+            <Input size="large" placeholder="Codigo Universitario" />
+          </Form.Item>
+          <Form.Item
             name="email"
             rules={[
               {
