@@ -3,7 +3,7 @@ import CustomLayout from '../../components/Layout'
 import { useDispatch } from 'react-redux'
 import { showloading, hideloading } from "../../redux/alertsSlice"
 import axios from 'axios'
-import { Table, Button, Space } from 'antd'
+import { Table,} from 'antd'
 
 function UserList() {
   const [users, setUsers] = useState([])
@@ -51,22 +51,6 @@ function UserList() {
       key: "createdAt",
       render: (text) => new Date(text).toLocaleDateString(),
       width: 100,
-    },
-    {
-      title: "Acciones",
-      dataIndex: "actions",
-      key: "actions",
-      render: (text, record) => (
-        <Space size="middle">
-          <Button type="primary" danger>
-            Bloquear
-          </Button>
-          <Button type="default">
-            Editar
-          </Button>
-        </Space>
-      ),
-      width: 150,
     },
   ]
 
