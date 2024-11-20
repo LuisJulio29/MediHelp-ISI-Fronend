@@ -86,7 +86,7 @@ function DoctorAppointmets() {
       dataIndex: "fecha",
       render: (text, record) => (
         <div className='card-text'>
-          {moment(record.date).format('DD-MM-YYYY')} {moment(record.time, 'HH:mm').format('hh:mm A')}
+           {record.date} {moment(record.time, 'HH:mm').format('hh:mm A')}
         </div>
       ),
       width: 200,
