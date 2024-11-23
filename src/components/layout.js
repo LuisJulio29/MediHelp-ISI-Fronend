@@ -10,6 +10,7 @@ import {
   MedicineBoxOutlined,
   UsergroupAddOutlined,
   UserAddOutlined,
+  CarryOutOutlined,
 } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 
@@ -28,24 +29,31 @@ function CustomLayout({ children }) {
       path: "/",
     },
     {
+      key:"/calendar",
+      icon:<CalendarOutlined />,
+      label:"Calendar",
+      path:"/calendar"
+    },
+    {
       key: "/appointments",
-      icon: <CalendarOutlined />,
+      icon: <CarryOutOutlined />,
       label: "Appointments",
       path: "/appointments",
     },
-    {
+    
+    /*{
       key: "/apply-doctor",
       icon: <UserAddOutlined />,
       label: "Apply Doctor",
       path: "/apply-doctor",
-    },
+    }*/,
   ];
   const doctorMenu = [
     {
-      key: "/",
+      key: "/Home",
       icon: <HomeOutlined />,
       label: "Home",
-      path: "/",
+      path: "/doctor/Home",
     },
     {
       key: "/appointments",

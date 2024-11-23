@@ -15,6 +15,8 @@ import Profile from "./pages/Doctor/profile";
 import BookAppointment from "./pages/bookAppointment";
 import Appointments from "./pages/appointments";
 import DoctorAppointmets from "./pages/Doctor/doctorAppointments";
+import CalendarView from "./pages/calendar";
+import DoctorHome from "./pages/Doctor/doctorHome";
 
 
 
@@ -105,6 +107,22 @@ function App() {
           element={
             <ProtectedRoute>
               <DoctorAppointmets />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/calendar"
+          element={
+            <ProtectedRoute>
+              <CalendarView />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/doctor/Home"
+          element={
+            <ProtectedRoute>
+              <DoctorHome />
             </ProtectedRoute>
           }
         />
