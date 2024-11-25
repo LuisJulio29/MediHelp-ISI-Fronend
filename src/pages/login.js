@@ -2,7 +2,7 @@ import React from "react";
 import { Form, Input, Button, Checkbox } from "antd";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { hideloading, showloading } from "../redux/alertsSlice";
 
@@ -14,19 +14,29 @@ function Login() {
       dispatch(showloading());
       const response = await axios.post("api/user/login", values);
       dispatch(hideloading());
+  
       if (response.data.success) {
-        toast.success(response.data.message);
-        toast.success("Redirigiendo al home");
-        localStorage.setItem("token", response.data.data);
-        navigate("/");
+        const { token, isDoctor, name } = response.data.data;
+        toast.success(
+          isDoctor ? "Bienvenido Doctor" : `Bienvenido ${name || "Usuario"}`
+        );
+  
+        localStorage.setItem("token", token);
+
+        if (isDoctor) {
+          navigate("/doctor/Home");
+        } else {
+          navigate("/");
+        }
       } else {
         toast.error(response.data.message);
       }
     } catch (error) {
+      dispatch(hideloading());
       toast.error("Algo mal ha pasado :(");
     }
   };
-
+  
   return (
     <div className="d-flex align-items-center justify-content-center vh-100 bg-light">
       <div

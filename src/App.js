@@ -39,6 +39,14 @@ function App() {
         <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
         <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
         <Route
+          path="/doctor/Home"
+          element={
+            <ProtectedRoute>
+              <DoctorHome />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/"
           element={
             <ProtectedRoute>
@@ -115,14 +123,6 @@ function App() {
           element={
             <ProtectedRoute>
               <CalendarView />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/doctor/Home"
-          element={
-            <ProtectedRoute>
-              <DoctorHome />
             </ProtectedRoute>
           }
         />
