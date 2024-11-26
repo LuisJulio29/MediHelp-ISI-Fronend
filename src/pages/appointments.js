@@ -127,7 +127,6 @@ function Appointments() {
         </div>
       </div>
 
-      {/* Estilos adicionales */}
       <style jsx>{`
         .container {
           background-color: #f9f9f9;
