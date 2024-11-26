@@ -10,9 +10,6 @@ function Home() {
   const [doctors, setDoctors] = useState([]);
   const dispatch = useDispatch();
 
-  // Obtener doctores aprobados
- 
-
   useEffect(() => {
     const getDoctors = async () => {
       try {

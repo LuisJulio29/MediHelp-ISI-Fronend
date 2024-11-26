@@ -38,7 +38,7 @@ function Doctor({ doctor }) {
         <ClockCircleOutlined /> {doctor.timings[0]} - {doctor.timings[1]}
       </p>
       <Button type="primary" block>
-        Ver Perfil
+        Reservar Cita
       </Button>
     </Card>
   );
