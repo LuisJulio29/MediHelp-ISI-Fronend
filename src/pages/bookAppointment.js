@@ -7,6 +7,7 @@ import { toast } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import { DatePicker, Row, Col, Avatar, Divider, Card } from "antd";
 import { MailOutlined, PhoneOutlined, ClockCircleOutlined } from "@ant-design/icons";
+import moment from "moment";
 
 function BookAppointment() {
   const [date, setDate] = useState(null);
@@ -16,8 +17,6 @@ function BookAppointment() {
   const params = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
- 
 
   const fetchAvailableSlots = async (selectedDate) => {
     try {
@@ -97,6 +96,14 @@ function BookAppointment() {
     getDoctorData();
   }, [dispatch, params.doctorId]);
 
+  // Función para deshabilitar fechas pasadas y fines de semana
+  const disabledDate = (current) => {
+    return (
+      current && 
+      (current < moment().startOf("day") || current.day() === 0 || current.day() === 6)
+    );
+  };
+
   return (
     <CustomLayout>
       {doctor && (
@@ -138,6 +145,7 @@ function BookAppointment() {
                 setDate(formattedDate);
                 fetchAvailableSlots(formattedDate);
               }}
+              disabledDate={disabledDate}
               style={{ width: "100%", maxWidth: "600px" }}
             />
           </div>

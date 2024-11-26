@@ -3,7 +3,7 @@ import CustomLayout from "../components/Layout";
 import { useDispatch } from "react-redux";
 import { showloading, hideloading } from "../redux/alertsSlice";
 import axios from "axios";
-import { Button, Space, Table } from "antd";
+import { Button, Table } from "antd";
 import moment from "moment";
 import toast from "react-hot-toast";
 
@@ -88,30 +88,23 @@ function Appointments() {
           {record.date} {moment(record.time, "HH:mm").format("hh:mm A")}
         </div>
       ),
-      width: 200,
+      width: 175,
     },
     {
       title: "Estado",
       dataIndex: "status",
-      width: 120,
+      width: 100,
     },
     {
       title: "Acciones",
       dataIndex: "actions",
       render: (text, record) => (
-        <Space size="middle">
-          {record.status === "approved" && (
             <Button
               danger
               type="primary"
-              onClick={() => cancelAppoinment(record, "rejected")}
-            >
-              Cancelar
-            </Button>
-          )}
-        </Space>
+              onClick={() => cancelAppoinment(record, "rejected")}>Cancelar</Button>
       ),
-      width: 150,
+      width: 100,
     },
   ];
 
