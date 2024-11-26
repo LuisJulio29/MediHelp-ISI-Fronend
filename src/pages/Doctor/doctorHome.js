@@ -10,30 +10,31 @@ function DoctorHome() {
   const dispatch = useDispatch();
 
   // Obtener citas del usuario
-  const getAppointments = async () => {
-    try {
-      dispatch(showloading());
-      const response = await axios.get(
-        "/api/doctor/get-appointments-by-doctor-id",
-        {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-        }
-      );
-      dispatch(hideloading());
-      if (response.data.success) {
-        setAppointments(response.data.data);
-      }
-    } catch (error) {
-      dispatch(hideloading());
-      console.log(error);
-    }
-  };
-
+ 
   useEffect(() => {
+    const getAppointments = async () => {
+      try {
+        dispatch(showloading());
+        const response = await axios.get(
+          "/api/doctor/get-appointments-by-doctor-id",
+          {
+            headers: {
+              Authorization: "Bearer " + localStorage.getItem("token"),
+            },
+          }
+        );
+        dispatch(hideloading());
+        if (response.data.success) {
+          setAppointments(response.data.data);
+        }
+      } catch (error) {
+        dispatch(hideloading());
+        console.log(error);
+      }
+    };
+  
     getAppointments();
-  }, []);
+  }, [dispatch]);
 
   // Función para obtener las citas por fecha
   const getListData = (value) => {

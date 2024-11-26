@@ -1,49 +1,73 @@
-import React, { useEffect, useState } from 'react'
-import CustomLayout from '../components/Layout'
-import { useDispatch } from 'react-redux'
-import { showloading, hideloading } from "../redux/alertsSlice"
-import axios from 'axios'
-import { Table, } from 'antd'
-import moment from 'moment'
-
+import React, { useEffect, useState } from "react";
+import CustomLayout from "../components/Layout";
+import { useDispatch } from "react-redux";
+import { showloading, hideloading } from "../redux/alertsSlice";
+import axios from "axios";
+import { Button, Space, Table } from "antd";
+import moment from "moment";
+import toast from "react-hot-toast";
 
 function Appointments() {
-  const [appointments, setAppointments] = useState([])
-  const dispatch = useDispatch()
+  const [appointments, setAppointments] = useState([]);
+  const dispatch = useDispatch();
 
-  
   const getAppointmentsData = async () => {
     try {
-      dispatch(showloading())
-      const response = await axios.get('/api/user/get-appointments-by-user-id', {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
+      dispatch(showloading());
+      const response = await axios.get(
+        "/api/user/get-appointments-by-user-id",
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         }
-      })
-      dispatch(hideloading())
+      );
+      dispatch(hideloading());
       if (response.data.success) {
-        setAppointments(response.data.data)
-        console.log(response.data.data)
+        setAppointments(response.data.data);
+        console.log(response.data.data);
       }
     } catch (error) {
-      dispatch(hideloading())
-      console.log(error)
+      dispatch(hideloading());
+      console.log(error);
     }
-  }
-
+  };
 
   useEffect(() => {
-    getAppointmentsData()
-  }, [])
+    getAppointmentsData();
+  }, [dispatch]);
 
+  const cancelAppoinment = async (record, status) => {
+    try {
+      dispatch(showloading());
+      const response = await axios.post(
+        "/api/user/change-appointment-status",
+        { appointmentId: record._id, status: status },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      console.log(record);
+      dispatch(hideloading());
+      if (response.data.success) {
+        toast.success(response.data.message);
+        getAppointmentsData();
+      }
+    } catch (error) {
+      dispatch(hideloading());
+      toast.error("Error al cambiar el estado de la cita");
+      console.log(error);
+    }
+  };
 
   const columns = [
-    
     {
       title: "Doctor",
       dataIndex: "name",
       render: (text, record) => (
-        <div className='card-text'>
+        <div className="card-text">
           {record.doctorInfo.firstName} {record.doctorInfo.lastName}
         </div>
       ),
@@ -53,9 +77,7 @@ function Appointments() {
       title: "Departamento",
       dataIndex: "department",
       render: (text, record) => (
-        <div className='card-text'>
-          {record.doctorInfo.department}
-        </div>
+        <div className="card-text">{record.doctorInfo.department}</div>
       ),
       width: 150,
     },
@@ -63,8 +85,8 @@ function Appointments() {
       title: "Fecha",
       dataIndex: "fecha",
       render: (text, record) => (
-        <div className='card-text'>
-          {record.date} {moment(record.time, 'HH:mm').format('hh:mm A')}
+        <div className="card-text">
+          {record.date} {moment(record.time, "HH:mm").format("hh:mm A")}
         </div>
       ),
       width: 200,
@@ -73,12 +95,30 @@ function Appointments() {
       title: "Estado",
       dataIndex: "status",
       width: 120,
-    }  
-  ]
+    },
+    {
+      title: "Acciones",
+      dataIndex: "actions",
+      render: (text, record) => (
+        <Space size="middle">
+          {record.status === "approved" && (
+            <Button
+              danger
+              type="primary"
+              onClick={() => cancelAppoinment(record, "rejected")}
+            >
+              Cancelar
+            </Button>
+          )}
+        </Space>
+      ),
+      width: 150,
+    },
+  ];
 
   return (
     <CustomLayout>
-    <div className="container mt-4">
+      <div className="container mt-4">
         <h1 className="text-center mb-4">Citas establecidas</h1>
 
         {/* Tabla responsive */}
@@ -89,7 +129,7 @@ function Appointments() {
             rowKey="_id"
             bordered
             pagination={{ pageSize: 10 }}
-            scroll={{ x: 'max-content' }} // Hacer que la tabla sea desplazable horizontalmente en pantallas pequeñas
+            scroll={{ x: "max-content" }} // Hacer que la tabla sea desplazable horizontalmente en pantallas pequeñas
             className="shadow-sm"
           />
         </div>
@@ -119,7 +159,7 @@ function Appointments() {
         }
       `}</style>
     </CustomLayout>
-  )
+  );
 }
 
-export default Appointments
+export default Appointments;

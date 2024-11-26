@@ -11,27 +11,28 @@ function Home() {
   const dispatch = useDispatch();
 
   // Obtener doctores aprobados
-  const getDoctors = async () => {
-    try {
-      dispatch(showloading());
-      const response = await axios.get("/api/user/get-all-approved-doctors", {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      });
-      dispatch(hideloading());
-      if (response.data.success) {
-        setDoctors(response.data.data);
-      }
-    } catch (error) {
-      dispatch(hideloading());
-      console.log(error);
-    }
-  };
+ 
 
   useEffect(() => {
+    const getDoctors = async () => {
+      try {
+        dispatch(showloading());
+        const response = await axios.get("/api/user/get-all-approved-doctors", {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        });
+        dispatch(hideloading());
+        if (response.data.success) {
+          setDoctors(response.data.data);
+        }
+      } catch (error) {
+        dispatch(hideloading());
+        console.log(error);
+      }
+    };
     getDoctors();
-  }, []);
+  }, [dispatch]);
 
   // Función para filtrar doctores por sede
   const filterDoctorsByDepartment = (department) => {

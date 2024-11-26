@@ -12,7 +12,6 @@ function DoctorAppointmets() {
   const [appointments, setAppointments] = useState([])
   const dispatch = useDispatch()
 
-  
   const getAppointmentsData = async () => {
     try {
       dispatch(showloading())
@@ -40,6 +39,7 @@ function DoctorAppointmets() {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       })
+      console.log(record)
       dispatch(hideloading())
       if (response.data.success) {
         toast.success(response.data.message)
@@ -47,12 +47,10 @@ function DoctorAppointmets() {
       }
     } catch (error) {
       dispatch(hideloading())
-      toast.error("Error al cambiar el estado del doctor")
+      toast.error("Error al cambiar el estado de la cita")
       console.log(error)
     }
   }
-
-
 
   useEffect(() => {
     getAppointmentsData()
