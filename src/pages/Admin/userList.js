@@ -3,7 +3,7 @@ import CustomLayout from "../../components/Layout";
 import { useDispatch } from "react-redux";
 import { showloading, hideloading } from "../../redux/alertsSlice";
 import axios from "axios";
-import { Table, Button } from "antd";
+import { Table, Button, Popconfirm, message } from "antd";
 import AddUserModal from "../../components/AddUserModal";
 
 function UserList() {
@@ -25,6 +25,28 @@ function UserList() {
       }
     } catch (error) {
       dispatch(hideloading());
+      console.log(error);
+    }
+  };
+
+  const handleDeleteUser = async (userId) => {
+    try {
+      dispatch(showloading());
+      const response = await axios.delete(`/api/admin/delete-user/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      dispatch(hideloading());
+      if (response.data.success) {
+        message.success(response.data.message);
+        getUsersData(); // Actualiza la lista después de eliminar
+      } else {
+        message.error(response.data.message);
+      }
+    } catch (error) {
+      dispatch(hideloading());
+      message.error("Error al eliminar el usuario");
       console.log(error);
     }
   };
@@ -53,6 +75,21 @@ function UserList() {
       key: "createdAt",
       sorter: (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
       render: (text) => new Date(text).toLocaleDateString(),
+      width: 100,
+    },
+    {
+      title: "Acciones",
+      key: "actions",
+      render: (record) => (
+        <Popconfirm
+          title="¿Estás seguro de eliminar este usuario?"
+          onConfirm={() => handleDeleteUser(record._id)}
+          okText="Sí"
+          cancelText="No"
+        >
+          <Button danger  type='primary'>Eliminar</Button>
+        </Popconfirm>
+      ),
       width: 100,
     },
   ];
