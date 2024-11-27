@@ -58,13 +58,13 @@ const useUsers = () => {
     }
   }, [fetchUsers, dispatch]);
 
-  return { users, fetchUsers, deleteUser};
+  return { users, fetchUsers, deleteUser };
 };
 
 function UserList() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const { users, fetchUsers, deleteUser, isLoading } = useUsers();
+  const { users, fetchUsers, deleteUser } = useUsers();
 
   useEffect(() => {
     fetchUsers(searchTerm);
@@ -137,7 +137,6 @@ function UserList() {
             pagination={{ pageSize: 10 }}
             scroll={{ x: "max-content" }}
             className="shadow-sm"
-            loading={isLoading}
           />
         </div>
       </div>
