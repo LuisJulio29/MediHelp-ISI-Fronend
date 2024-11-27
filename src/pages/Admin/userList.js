@@ -1,35 +1,41 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import CustomLayout from "../../components/Layout";
 import { useDispatch } from "react-redux";
 import { showloading, hideloading } from "../../redux/alertsSlice";
 import axios from "axios";
-import { Table, Button, Popconfirm, message } from "antd";
+import { Table, Button, Popconfirm, message, Input } from "antd";
 import AddUserModal from "../../components/AddUserModal";
 
-function UserList() {
+// Custom hook for fetching and managing users
+const useUsers = () => {
   const [users, setUsers] = useState([]);
-  const [isModalVisible, setIsModalVisible] = useState(false);
   const dispatch = useDispatch();
 
-  const getUsersData = async () => {
+  const fetchUsers = useCallback(async (searchTerm = "") => {
     try {
       dispatch(showloading());
+      
       const response = await axios.get("/api/admin/get-all-users", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      dispatch(hideloading());
+
       if (response.data.success) {
-        setUsers(response.data.data);
+        const filteredUsers = response.data.data.filter((user) =>
+          user.name.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+        setUsers(filteredUsers);
       }
     } catch (error) {
+      console.error("Error fetching users:", error);
+      message.error("No se pudieron cargar los usuarios");
+    } finally {
       dispatch(hideloading());
-      console.log(error);
     }
-  };
+  }, [dispatch]);
 
-  const handleDeleteUser = async (userId) => {
+  const deleteUser = useCallback(async (userId) => {
     try {
       dispatch(showloading());
       const response = await axios.delete(`/api/admin/delete-user/${userId}`, {
@@ -37,25 +43,34 @@ function UserList() {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      dispatch(hideloading());
+
       if (response.data.success) {
         message.success(response.data.message);
-        getUsersData(); // Actualiza la lista después de eliminar
+        await fetchUsers(); // Refresh users after deletion
       } else {
         message.error(response.data.message);
       }
     } catch (error) {
-      dispatch(hideloading());
       message.error("Error al eliminar el usuario");
-      console.log(error);
+      console.error(error);
+    } finally {
+      dispatch(hideloading());
     }
-  };
+  }, [fetchUsers, dispatch]);
+
+  return { users, fetchUsers, deleteUser};
+};
+
+function UserList() {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const { users, fetchUsers, deleteUser, isLoading } = useUsers();
 
   useEffect(() => {
-    getUsersData();
-  }, []);
+    fetchUsers(searchTerm);
+  }, [searchTerm, fetchUsers]);
 
-  const columns = [
+  const columns = useMemo(() => [
     {
       title: "Nombre",
       dataIndex: "name",
@@ -83,22 +98,28 @@ function UserList() {
       render: (record) => (
         <Popconfirm
           title="¿Estás seguro de eliminar este usuario?"
-          onConfirm={() => handleDeleteUser(record._id)}
+          onConfirm={() => deleteUser(record._id)}
           okText="Sí"
           cancelText="No"
         >
-          <Button danger  type='primary'>Eliminar</Button>
+          <Button danger type='primary'>Eliminar</Button>
         </Popconfirm>
       ),
       width: 100,
     },
-  ];
+  ], [deleteUser]);
 
   return (
     <CustomLayout>
       <div className="container mt-4">
+        <h1 className="d-flex justify-content-center mb-4">Lista de Usuarios</h1>
         <div className="d-flex justify-content-between align-items-center mb-4">
-          <h1 className="mb-0">Lista de Usuarios</h1>
+          <Input
+            placeholder="Buscar doctor por nombre"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{ maxWidth: "600px", width: "100%" }}
+          />
           <Button
             type="primary"
             onClick={() => setIsModalVisible(true)}
@@ -107,8 +128,6 @@ function UserList() {
             Agregar Usuario
           </Button>
         </div>
-
-        {/* Ajustar la tabla para ser responsive */}
         <div className="table-responsive">
           <Table
             dataSource={users}
@@ -116,19 +135,19 @@ function UserList() {
             rowKey="_id"
             bordered
             pagination={{ pageSize: 10 }}
-            scroll={{ x: "max-content" }} // Hacer que la tabla sea desplazable horizontalmente en pantallas pequeñas
+            scroll={{ x: "max-content" }}
             className="shadow-sm"
+            loading={isLoading}
           />
         </div>
       </div>
 
-      {/* Modal para agregar usuario */}
       <AddUserModal
         visible={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         onAddUser={() => {
           setIsModalVisible(false);
-          getUsersData(); // Actualiza la lista de usuarios después de agregar uno nuevo
+          fetchUsers(); // Refresh users after adding
         }}
       />
     </CustomLayout>
