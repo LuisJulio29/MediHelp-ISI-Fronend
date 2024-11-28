@@ -34,7 +34,7 @@ function AddUserModal({ visible, onCancel, onAddUser }) {
   return (
     <Modal
       title="Agregar Usuario"
-      visible={visible}
+      open={visible}
       onCancel={onCancel}
       onOk={() => form.submit()}
       okText="Registrar"
