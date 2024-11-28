@@ -105,6 +105,9 @@ function DoctorAppointmets() {
             {record.status === "pending" && (
               <Button danger  type='primary'  onClick={()=>changeAppointmentStatus(record, "rejected")}>Desaprobar</Button>
             )}
+             {record.status === "approved" && (
+              <Button type='primary' onClick={()=>changeAppointmentStatus(record, "completed")}>completar</Button>
+            )}
           </Space>
         ),
         width: 150,
