@@ -145,10 +145,6 @@ function DoctorList() {
     },
   ];
 
-  useEffect(() => {
-    getDoctorsData();
-  }, []);
-
   return (
     <CustomLayout>
       <div className="container mt-4 p-4 bg-light rounded">
