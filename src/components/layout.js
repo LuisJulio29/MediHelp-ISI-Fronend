@@ -28,24 +28,24 @@ function CustomLayout({ children }) {
       path: "/",
     },
     {
-      key:"/calendar",
-      icon:<CalendarOutlined />,
-      label:"Calendar",
-      path:"/calendar"
+      key: "/calendar",
+      icon: <CalendarOutlined />,
+      label: "Calendar",
+      path: "/calendar",
     },
     {
       key: "/appointments",
       icon: <CarryOutOutlined />,
       label: "Appointments",
       path: "/appointments",
-    }
-    
+    },
+
     /*{
       key: "/apply-doctor",
       icon: <UserAddOutlined />,
       label: "Apply Doctor",
       path: "/apply-doctor",
-    }*/,
+    }*/
   ];
   const doctorMenu = [
     {
@@ -59,7 +59,7 @@ function CustomLayout({ children }) {
       icon: <CalendarOutlined />,
       label: "Appointments",
       path: "/doctor/appointments",
-    }, 
+    },
   ];
 
   const adminMenu = [
@@ -84,7 +84,7 @@ function CustomLayout({ children }) {
   ];
 
   const commonMenu = [
-    ...user?.isAdmin ? adminMenu : user?.isDoctor ? doctorMenu : userMenu, 
+    ...(user?.isAdmin ? adminMenu : user?.isDoctor ? doctorMenu : userMenu),
     {
       key: "logout",
       icon: <LogoutOutlined />,
@@ -104,7 +104,6 @@ function CustomLayout({ children }) {
       }
     }
   };
-
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
@@ -127,14 +126,26 @@ function CustomLayout({ children }) {
         {/* Header */}
         <Header className="bg-white p-0">
           <div className="d-flex justify-content-end align-items-center p-2">
-            <div onClick={()=>navigate("/notifications")} style={{cursor:"pointer"}}>
-              <Badge count={user?.unseenNotifications.length} >
-                <BellOutlined style={{ fontSize: "22px"}} />
+            <div
+              onClick={() => navigate("/notifications")}
+              style={{ cursor: "pointer" }}
+            >
+              <Badge count={user?.unseenNotifications.length}>
+                <BellOutlined style={{ fontSize: "22px" }} />
               </Badge>
             </div>
             <div
-              onClick={() => navigate(`/doctor/profile/${user?._id}`)}
-              style={{ cursor: "pointer", display: "flex", alignItems: "center" ,marginLeft: "30px"}}
+              onClick={() => {
+                if (user?.isDoctor) {
+                  navigate(`/doctor/profile/${user?._id}`);
+                }
+              }}
+              style={{
+                cursor: user?.isDoctor ? "pointer" : "not-allowed",
+                display: "flex",
+                alignItems: "center",
+                marginLeft: "30px",
+              }}
             >
               <Avatar size="medium" icon={<UserOutlined />} />
               <span className="ms-2 me-3">{user?.name}</span>
