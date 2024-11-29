@@ -44,11 +44,11 @@ function Home() {
 
   const tabsItems = [
     {
-      label: "La Merced",
+      label: "Zaragocilla",
       key: "1",
       children: (
         <Row gutter={[20, 20]}>
-          {filterDoctorsByDepartment("La Merced").map((doctor) => (
+          {filterDoctorsByDepartment("Zaragocilla").map((doctor) => (
             <Col key={doctor._id} span={8} xs={24} sm={12} md={8} lg={6}>
               <Doctor doctor={doctor} />
             </Col>
