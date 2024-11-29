@@ -3,7 +3,8 @@ import CustomLayout from "../components/Layout";
 import { useDispatch } from "react-redux";
 import { showloading, hideloading } from "../redux/alertsSlice";
 import axios from "axios";
-import { Button, Table } from "antd";
+import { Button, Popconfirm, Table } from "antd";
+import { QuestionCircleOutlined } from '@ant-design/icons';
 import moment from "moment";
 import toast from "react-hot-toast";
 
@@ -99,10 +100,17 @@ function Appointments() {
       title: "Acciones",
       dataIndex: "actions",
       render: (text, record) => (
-            <Button
-              danger
-              type="primary"
-              onClick={() => cancelAppoinment(record, "rejected")}>Cancelar</Button>
+        <Popconfirm
+        title="¿Estás seguro de Cancelar la Cita?"
+        icon={
+          <QuestionCircleOutlined style={{color: 'red',}}/>}
+        onConfirm={() => cancelAppoinment(record, "rejected")}
+        okText="Sí"
+        cancelText="No"
+      >
+        <Button danger type="primary">Cancelar</Button>
+      </Popconfirm>
+            
       ),
       width: 100,
     },
