@@ -1,18 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import CustomLayout from "../../components/Layout";
 import { useDispatch } from "react-redux";
 import { showloading, hideloading } from "../../redux/alertsSlice";
 import axios from "axios";
-import { Button, Table, Space, Modal, Form, Input, TimePicker } from "antd";
-import { toast } from "react-hot-toast";
+import { Button, Table, Space, Modal, Form, Input, TimePicker, Popconfirm, message } from "antd";
 
-function DoctorList() {
+// Custom hook for fetching and managing doctors
+const useDoctors = () => {
   const [doctors, setDoctors] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [form] = Form.useForm();
   const dispatch = useDispatch();
 
-  const getDoctorsData = async () => {
+  const getDoctorsData = useCallback(async (searchTerm = "") => {
     try {
       dispatch(showloading());
       const response = await axios.get("/api/admin/get-all-doctors", {
@@ -20,17 +18,50 @@ function DoctorList() {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      dispatch(hideloading());
+
       if (response.data.success) {
-        setDoctors(response.data.data);
+        // Filter doctors based on name or email
+        const filteredDoctors = response.data.data.filter((doctor) =>
+          `${doctor.firstName} ${doctor.lastName}`.toLowerCase().includes(searchTerm.toLowerCase())
+        );  
+        setDoctors(filteredDoctors);
       }
     } catch (error) {
+      console.error("Error fetching doctors:", error);
+      message.error("No se pudieron cargar los doctores");
+    } finally {
       dispatch(hideloading());
-      console.log(error);
     }
-  };
+  }, [dispatch]);
 
-  const handleCreateDoctor = async (values) => {
+  const changeDoctorStatus = useCallback(async (record, status) => {
+    try {
+      dispatch(showloading());
+      const response = await axios.post(
+        '/api/admin/change-doctor-status',
+        { doctorId: record._id, userId: record.userId, status: status },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        }
+      );
+
+      if (response.data.success) {
+        message.success(response.data.message);
+        await getDoctorsData(); // Refresh doctors after status change
+      } else {
+        message.error(response.data.message);
+      }
+    } catch (error) {
+      message.error('Error al cambiar el estado del doctor');
+      console.error(error);
+    } finally {
+      dispatch(hideloading());
+    }
+  }, [getDoctorsData, dispatch]);
+
+  const createDoctor = useCallback(async (values, form, setIsModalOpen) => {
     try {
       dispatch(showloading());
       const timings = values.timings.map((time) => time.format("HH:mm"));
@@ -43,51 +74,37 @@ function DoctorList() {
           },
         }
       );
-      dispatch(hideloading());
+
       if (response.data.success) {
-        toast.success(response.data.message);
+        message.success(response.data.message);
         setIsModalOpen(false);
         form.resetFields();
-        getDoctorsData();
+        await getDoctorsData();
       } else {
-        toast.error(response.data.message);
+        message.error(response.data.message);
       }
     } catch (error) {
+      message.error("Error al crear el doctor");
+      console.error(error);
+    } finally {
       dispatch(hideloading());
-      toast.error("Error al crear el doctor");
-      console.log(error);
     }
-  };
+  }, [getDoctorsData, dispatch]);
 
-  const changeDoctorStatus = async (record, status) => {
-    try {
-      dispatch(showloading());
-      const response = await axios.post(
-        '/api/admin/change-doctor-status',
-        { doctorId: record._id, userId: record.userId, status: status },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        }
-      );
-      dispatch(hideloading());
-      if (response.data.success) {
-        toast.success(response.data.message);
-        getDoctorsData();
-      }
-    } catch (error) {
-      dispatch(hideloading());
-      toast.error('Error al cambiar el estado del doctor');
-      console.log(error);
-    }
-  };
+  return { doctors, getDoctorsData, changeDoctorStatus, createDoctor };
+};
+
+function DoctorList() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [form] = Form.useForm();
+  const { doctors, getDoctorsData, changeDoctorStatus, createDoctor } = useDoctors();
 
   useEffect(() => {
-    getDoctorsData();
-  }, []);
+    getDoctorsData(searchTerm);
+  }, [searchTerm, getDoctorsData]);
 
-  const columns = [
+  const columns = useMemo(() => [
     {
       title: "Nombre",
       dataIndex: "name",
@@ -96,6 +113,7 @@ function DoctorList() {
           {record.firstName} {record.lastName}
         </span>
       ),
+      sorter: (a, b) => `${a.firstName} ${a.lastName}`.localeCompare(`${b.firstName} ${b.lastName}`),
       width: 150,
     },
     {
@@ -131,26 +149,42 @@ function DoctorList() {
               Aprobar
             </Button>
           )}
-          {record.status === "approved" && (
-            <Button
-              className="btn btn-danger btn-sm"
-              onClick={() => changeDoctorStatus(record, "blocked")}
-            >
-              Desaprobar
-            </Button>
-          )}
+          <Popconfirm
+            title="¿Estás seguro de desaprobar a este doctor?"  
+            onConfirm={() => changeDoctorStatus(record, "blocked")}
+            okText="Sí"
+            cancelText="No"
+          >
+            {record.status === "approved" && (
+              <Button danger type="primary">Desaprobar</Button>
+            )}
+          </Popconfirm>
         </Space>
       ),
       width: 150,
     },
-  ];
+  ], [changeDoctorStatus]);
+
+  const handleCreateDoctor = (values) => {
+    createDoctor(values, form, setIsModalOpen);
+  };
 
   return (
     <CustomLayout>
       <div className="container mt-4 p-4 bg-light rounded">
         <h1 className="text-center mb-4">Lista de Doctores</h1>
-        <div className="mb-3 text-end">
-          <Button type="primary" onClick={() => setIsModalOpen(true)}>
+        <div className="d-flex justify-content-between align-items-center mb-4">
+          <Input
+            placeholder="Buscar doctor por nombre o email"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{ maxWidth: "600px", width: "100%" }}
+          />
+          <Button
+            type="primary"
+            onClick={() => setIsModalOpen(true)}
+            className="ml-auto"
+          >
             Añadir Doctor
           </Button>
         </div>
